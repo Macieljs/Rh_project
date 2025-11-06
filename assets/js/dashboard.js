@@ -64,6 +64,12 @@ window.showSection = function(sectionName) {
                     }
                 }, 500);
             }
+        } else if (sectionName === 'metas') {
+                if (typeof window.loadMetas === 'function') {
+                    window.loadMetas();
+                } else {
+                    console.error('loadMetas não está definido');
+                }
         } else if (sectionName === 'relatorios') {
             if (typeof loadRelatorios === 'function') {
                 loadRelatorios();
