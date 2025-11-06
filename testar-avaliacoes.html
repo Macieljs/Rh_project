@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Teste de Avaliações</title>
+</head>
+<body>
+    <h1>Teste de Funcionalidades</h1>
+    <button onclick="testarShowSection()">Testar showSection</button>
+    <button onclick="testarLoadAvaliacoes()">Testar loadAvaliacoes</button>
+    <div id="resultado"></div>
+    
+    <script>
+        function testarShowSection() {
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = '<p>Testando showSection...</p>';
+            
+            if (typeof window.showSection === 'function') {
+                resultado.innerHTML += '<p style="color: green;">✓ showSection está disponível</p>';
+                try {
+                    window.showSection('avaliacoes');
+                    resultado.innerHTML += '<p style="color: green;">✓ showSection executado com sucesso</p>';
+                } catch (error) {
+                    resultado.innerHTML += '<p style="color: red;">✗ Erro: ' + error.message + '</p>';
+                }
+            } else {
+                resultado.innerHTML += '<p style="color: red;">✗ showSection NÃO está disponível</p>';
+            }
+        }
+        
+        function testarLoadAvaliacoes() {
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = '<p>Testando loadAvaliacoes...</p>';
+            
+            if (typeof window.loadAvaliacoes === 'function') {
+                resultado.innerHTML += '<p style="color: green;">✓ loadAvaliacoes está disponível</p>';
+                try {
+                    window.loadAvaliacoes();
+                    resultado.innerHTML += '<p style="color: green;">✓ loadAvaliacoes executado com sucesso</p>';
+                } catch (error) {
+                    resultado.innerHTML += '<p style="color: red;">✗ Erro: ' + error.message + '</p>';
+                }
+            } else {
+                resultado.innerHTML += '<p style="color: red;">✗ loadAvaliacoes NÃO está disponível</p>';
+            }
+        }
+    </script>
+</body>
+</html>
+

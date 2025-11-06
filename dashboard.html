@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema de Desempenho</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="bi bi-graph-up"></i> Sistema de Desempenho</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('dashboard')">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('pessoas')">
+                            <i class="bi bi-people"></i> Colaboradores
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="event.preventDefault(); const func = window.showSection || showSection; if(typeof func === 'function') { func('avaliacoes'); } else { console.error('showSection não disponível'); alert('Erro: Função não encontrada. Recarregue a página.'); }">
+                            <i class="bi bi-clipboard-check"></i> Avaliações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('metas')">
+                            <i class="bi bi-bullseye"></i> Metas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('relatorios')">
+                            <i class="bi bi-bar-chart"></i> Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link text-white">
+                            <i class="bi bi-person-circle"></i> <span id="userName"></span>
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()">
+                            <i class="bi bi-box-arrow-right"></i> Sair
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-4">
+        <!-- Dashboard Section -->
+        <div id="section-dashboard" class="section">
+            <h2 class="mb-4">Dashboard</h2>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-people"></i> Colaboradores</h5>
+                            <h3 id="totalColaboradores">-</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-clipboard-check"></i> Avaliações</h5>
+                            <h3 id="totalAvaliacoes">-</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-clock-history"></i> Pendentes</h5>
+                            <h3 id="avaliacoesPendentes">-</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-check-circle"></i> Concluídas</h5>
+                            <h3 id="avaliacoesConcluidas">-</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pessoas Section -->
+        <div id="section-pessoas" class="section" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Colaboradores</h2>
+                <button class="btn btn-primary" onclick="openPessoaModal()">
+                    <i class="bi bi-plus-circle"></i> Novo Colaborador
+                </button>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>CPF</th>
+                                    <th>Telefone</th>
+                                    <th>Tipo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pessoasTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center">Carregando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Avaliações Section -->
+        <div id="section-avaliacoes" class="section" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Avaliações</h2>
+                <button class="btn btn-primary" onclick="const func = window.openAvaliacaoModal || openAvaliacaoModal; if(typeof func === 'function') { func(); } else { console.error('openAvaliacaoModal não está disponível'); alert('Erro: Função não carregada. Recarregue a página (Ctrl+Shift+R).'); }">
+                    <i class="bi bi-plus-circle"></i> Nova Avaliação
+                </button>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Data</th>
+                                    <th>Funcionário</th>
+                                    <th>Tipo</th>
+                                    <th>Status</th>
+                                    <th>Nota Final</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="avaliacoesTableBody">
+                                <tr>
+                                    <td colspan="7" class="text-center">Carregando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metas Section -->
+        <div id="section-metas" class="section" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Metas (OKR/KPI)</h2>
+                <button class="btn btn-primary" onclick="openMetaModal()">
+                    <i class="bi bi-plus-circle"></i> Nova Meta
+                </button>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <p class="text-muted">Funcionalidade de metas será implementada em breve.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Relatórios Section -->
+        <div id="section-relatorios" class="section" style="display: none;">
+            <h2 class="mb-4">Relatórios e Indicadores</h2>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Distribuição de Avaliações por Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Avaliações por Mês</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="monthlyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pessoa -->
+    <div class="modal fade" id="pessoaModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pessoaModalTitle">Nova Pessoa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="pessoaForm">
+                        <input type="hidden" id="pessoa_id">
+                        <div class="mb-3">
+                            <label class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="pessoa_nome" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">CPF</label>
+                            <input type="text" class="form-control" id="pessoa_cpf" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Data de Nascimento</label>
+                            <input type="date" class="form-control" id="pessoa_nascimento" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Telefone</label>
+                            <input type="text" class="form-control" id="pessoa_telefone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tipo</label>
+                            <select class="form-select" id="pessoa_tipo_id" required></select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="savePessoa()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Avaliação -->
+    <div class="modal fade" id="avaliacaoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="avaliacaoModalTitle">Nova Avaliação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="avaliacaoForm">
+                        <input type="hidden" id="avaliacao_id">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Data da Avaliação</label>
+                                <input type="date" class="form-control" id="avaliacao_data" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Ciclo/Período</label>
+                                <input type="text" class="form-control" id="avaliacao_ciclo" placeholder="Ex: 2024-Q1, Janeiro/2024">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Funcionário Avaliado</label>
+                                <select class="form-select" id="avaliacao_funcionario_id" required></select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Tipo de Avaliação</label>
+                                <select class="form-select" id="avaliacao_tipo_id" required></select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3" id="avaliadorContainer" style="display: none;">
+                            <label class="form-label">Avaliador</label>
+                            <select class="form-select" id="avaliacao_avaliador_id"></select>
+                            <small class="text-muted">Deixe vazio se for autoavaliação</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="avaliacao_status_id" required></select>
+                        </div>
+                        
+                        <hr>
+                        <h6>Avaliação por Competências</h6>
+                        <div id="competenciasContainer">
+                            <p class="text-muted">Carregando competências...</p>
+                        </div>
+                        
+                        <div class="mb-3 mt-3">
+                            <label class="form-label">Observações Gerais</label>
+                            <textarea class="form-control" id="avaliacao_observacao" rows="3" placeholder="Observações adicionais sobre a avaliação"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Nota Final</label>
+                            <input type="number" class="form-control" id="avaliacao_nota_final" step="0.01" min="0" max="10" readonly>
+                            <small class="text-muted">Calculada automaticamente pela média das competências</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveAvaliacao()">
+                        <i class="bi bi-save"></i> Salvar Avaliação
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="alertContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 1050;"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/pessoas.js"></script>
+    <script src="assets/js/avaliacoes.js" onerror="console.error('ERRO: Falha ao carregar avaliacoes.js')"></script>
+    <script src="assets/js/metas.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script>
+        // Verificar se todas as funções necessárias estão carregadas
+        document.addEventListener('DOMContentLoaded', function() {
+            // Aguardar um pouco para garantir que os scripts foram carregados
+            setTimeout(function() {
+                console.log('Verificando funções carregadas...');
+                console.log('loadAvaliacoes:', typeof window.loadAvaliacoes);
+                console.log('openAvaliacaoModal:', typeof window.openAvaliacaoModal);
+                console.log('loadPessoas:', typeof loadPessoas);
+                console.log('showSection:', typeof showSection);
+                
+                // Garantir que as funções estejam disponíveis globalmente
+                if (typeof window.loadAvaliacoes === 'undefined') {
+                    console.error('ERRO: loadAvaliacoes não foi carregado! Verifique assets/js/avaliacoes.js');
+                    console.error('Tentando recarregar...');
+                    // Tentar recarregar o script
+                    const script = document.createElement('script');
+                    script.src = 'assets/js/avaliacoes.js';
+                    script.onload = function() {
+                        console.log('Script avaliacoes.js recarregado com sucesso');
+                    };
+                    script.onerror = function() {
+                        console.error('ERRO: Não foi possível carregar assets/js/avaliacoes.js');
+                    };
+                    document.head.appendChild(script);
+                } else {
+                    console.log('✓ loadAvaliacoes carregado corretamente');
+                }
+                
+                if (typeof window.openAvaliacaoModal === 'undefined') {
+                    console.error('ERRO: openAvaliacaoModal não foi carregado! Verifique assets/js/avaliacoes.js');
+                } else {
+                    console.log('✓ openAvaliacaoModal carregado corretamente');
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>
+
